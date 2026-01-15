@@ -1,0 +1,102 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov black flake8
+
+    - name: Lint with flake8
+      run: |
+        # Stop build if there are Python syntax errors or undefined names
+        flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 src/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Format check with black
+      run: |
+        black --check src/
+
+    - name: Run tests
+      run: |
+        pytest tests/ -v --cov=src --cov-report=term-missing
+
+    - name: Test model training (quick smoke test)
+      run: |
+        # Quick smoke test - generate small dataset
+        python -c "
+        import sys
+        sys.path.append('src')
+        from data_generator import RestaurantDataGenerator
+        
+        # Generate tiny dataset for testing
+        gen = RestaurantDataGenerator()
+        gen.RESTAURANT_BASE = 10
+        gen.USER_BASE = 100
+        gen.HISTORICAL_ORDERS = 500
+        
+        gen.generate_restaurants()
+        gen.generate_users()
+        gen.generate_orders()
+        print('✅ Data generation works')
+        "
+
+  build-docs:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Verify documentation exists
+      run: |
+        test -f README.md
+        test -f prd/restaurant_recommendations_prd.md
+        test -f docs/methodology.md
+        test -f docs/architecture.md
+        echo "✅ All documentation files present"
+
+  deploy-demo:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to Streamlit Cloud
+      run: |
+        echo "🚀 Deployment would trigger here"
+        echo "For actual deployment, add Streamlit Cloud API token to GitHub Secrets"

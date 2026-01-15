@@ -1,0 +1,92 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Model files (large)
+# models/*.pkl
+models/*.h5
+models/*.pt
+
+# Data files (large)
+# data/raw/*.csv
+# data/processed/*.csv
+# data/synthetic/*.csv
+
+# Keep directory structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/synthetic/.gitkeep
+
+# Outputs
+# outputs/figures/*.png
+outputs/reports/*.pdf
+outputs/dashboards/*.html
+
+# Keep directory structure
+!outputs/figures/.gitkeep
+!outputs/reports/.gitkeep
+!outputs/dashboards/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Temporary files
+tmp/
+temp/
+*.tmp

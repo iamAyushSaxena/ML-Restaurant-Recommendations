@@ -1,0 +1,24 @@
+# Core ML and Data Processing
+pandas
+numpy
+scikit-learn
+scipy
+
+# Visualization
+matplotlib
+seaborn
+plotly
+
+# Web Application
+streamlit
+streamlit-option-menu
+
+# Utilities
+python-dotenv
+openpyxl
+jinja2
+
+# Development
+jupyter
+pytest
+black
